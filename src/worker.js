@@ -369,14 +369,26 @@ const aioli = {
 		// -----------------------------------------------------------------
 
 		// All biowasm modules export the variable "Module" so assign it
-		self.importScripts(`${tool.urlPrefix}/${tool.program}.js`);
+		if (tool.scriptUrl){
+			self.importScripts(tool.scriptUrl); 
+		}
+		else{
+			self.importScripts(`${tool.urlPrefix}/${tool.program}.js`);
+		}
 
 		// Initialize the Emscripten module and pass along settings to overwrite
 		tool.module = await Module({
 			// By default, tool name is hardcoded as "./this.program"
 			thisProgram: tool.program,
 			// Used by Emscripten to find path to .wasm / .data files
-			locateFile: (path, prefix) => `${tool.urlPrefix}/${path}`,
+			locateFile: (path, prefix) => {
+				if (tool.wasmUrl){
+					return tool.wasmUrl
+				}
+				else{
+					return `${tool.urlPrefix}/${path}`
+				}
+			},
 			// Custom stdin handling
 			stdin: () => {
 				if(aioli._stdinPtr < aioli.stdin.length)
