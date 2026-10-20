@@ -382,6 +382,13 @@ const aioli = {
 			thisProgram: tool.program,
 			// Used by Emscripten to find path to .wasm / .data files
 			locateFile: (path, prefix) => {
+				if (tool.runtimeFiles) {
+					if (!Object.prototype.hasOwnProperty.call(tool.runtimeFiles, path)) {
+						tool.runtimeFileError = new Error(`Undeclared runtime file: ${path}`);
+						throw tool.runtimeFileError;
+					}
+					return tool.runtimeFiles[path];
+				}
 				if (tool.wasmUrl){
 					return tool.wasmUrl
 				}
@@ -425,6 +432,8 @@ const aioli = {
 				}
 			}
 		});
+		if (tool.runtimeFileError)
+			throw tool.runtimeFileError;
 
 		// -----------------------------------------------------------------
 		// Setup file system
