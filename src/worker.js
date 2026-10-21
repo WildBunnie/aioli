@@ -389,12 +389,7 @@ const aioli = {
 					}
 					return tool.runtimeFiles[path];
 				}
-				if (tool.wasmUrl){
-					return tool.wasmUrl
-				}
-				else{
-					return `${tool.urlPrefix}/${path}`
-				}
+				return `${tool.urlPrefix}/${path}`;
 			},
 			// Custom stdin handling
 			stdin: () => {
